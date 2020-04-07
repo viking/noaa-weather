@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+import requests
+import geojson
+import sys
+
+resp = requests.get("https://api.weather.gov/stations/KBNA/observations/latest")
+if resp.status_code != 200:
+    sys.exit(1)
+
+result = geojson.loads(resp.text)
+temp = result.properties['temperature']
+if temp['unitCode'] != 'unit:degC':
+    sys.exit(2)
+
+value = temp['value'] * 1.8 + 32.0
+print(f"{round(value)}°F")
